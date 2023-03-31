@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { getDeviceType } from '../utils';
+import { getDeviceType, throttle } from '../utils';
 
 interface IViewport {
   width: number;
@@ -15,7 +15,10 @@ interface IViewport {
   toggleTheme: () => void;
 }
 
-const ViewportContext = createContext<IViewport>({} as IViewport);
+const ViewportContext = createContext<IViewport>({
+  // width: window.innerWidth,
+  // height: window.innerHeight,
+} as IViewport);
 
 const UPDATE_PER_SECOND = 5;
 
@@ -37,16 +40,10 @@ export const ViewportProvider: FC<ViewportProviderProps> = ({ children }) => {
     }
   };
 
-  let timeoutId: NodeJS.Timeout | null;
-
-  const handleResize = () => {
-    if (timeoutId) return;
-    timeoutId = setTimeout(() => {
-      timeoutId = null;
-      setWidth(window.innerWidth);
-      setHeight(window.innerHeight);
-    }, 1000 / UPDATE_PER_SECOND);
-  };
+  const handleResize = throttle(() => {
+    setWidth(window.innerWidth);
+    setHeight(window.innerHeight);
+  }, 1000 / UPDATE_PER_SECOND);
 
   useEffect(() => {
     setDeviceType(getDeviceType());

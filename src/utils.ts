@@ -12,3 +12,17 @@ export const getDeviceType = () => {
   }
   return 'desktop';
 };
+
+export const throttle = (callback: (...args: any[]) => void, delay = 1000) => {
+  let shouldWait = false;
+
+  return (...args: any[]) => {
+    if (shouldWait) return;
+
+    callback(...args);
+    shouldWait = true;
+    setTimeout(() => {
+      shouldWait = false;
+    }, delay);
+  };
+};
