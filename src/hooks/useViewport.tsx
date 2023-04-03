@@ -4,6 +4,8 @@ import React, {
   useContext,
   useEffect,
   useState,
+  useCallback,
+  useMemo,
 } from 'react';
 import { getDeviceType, throttle } from '../utils';
 
@@ -15,10 +17,7 @@ interface IViewport {
   toggleTheme: () => void;
 }
 
-const ViewportContext = createContext<IViewport>({
-  // width: window.innerWidth,
-  // height: window.innerHeight,
-} as IViewport);
+const ViewportContext = createContext<IViewport>({} as IViewport);
 
 const UPDATE_PER_SECOND = 5;
 
@@ -30,15 +29,15 @@ export const ViewportProvider: FC<ViewportProviderProps> = ({ children }) => {
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight);
   const [theme, setTheme] = useState('dark');
-  const [deviceType, setDeviceType] = useState('');
+  const deviceType = useMemo(getDeviceType, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     if (theme == 'dark') {
       setTheme('light');
     } else {
       setTheme('dark');
     }
-  };
+  }, [theme]);
 
   const handleResize = throttle(() => {
     setWidth(window.innerWidth);
@@ -46,7 +45,6 @@ export const ViewportProvider: FC<ViewportProviderProps> = ({ children }) => {
   }, 1000 / UPDATE_PER_SECOND);
 
   useEffect(() => {
-    setDeviceType(getDeviceType());
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);

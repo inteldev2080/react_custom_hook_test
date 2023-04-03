@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { useViewport } from '../hooks/useViewport';
-import logo from '../assets/logo.svg';
 import '../styles/MyComponent.css';
 
 const MyComponent: FC = () => {
@@ -14,7 +13,6 @@ const MyComponent: FC = () => {
         <p>Device Type: {deviceType}</p>
         <button onClick={toggleTheme}>Toggle Theme</button>
       </div>
-      <img src={logo} className='App-logo' alt='logo' />
     </div>
   );
 };
